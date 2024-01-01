@@ -1,0 +1,26 @@
+.appContainer {
+    padding: 5px 0px;
+}
+
+.headerContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 4%;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 10px;
+    top: 20px;
+}
+
+.title {
+    font-size:larger;
+    font-weight: bold;
+}
+
+.searchBar {
+    width: 50%;
+}
+
+addNotesIcon {
+    font-size: large;
+}
