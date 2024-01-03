@@ -11,7 +11,8 @@
   },
   "scripts": {
     "start": "ts-node ./src/app.ts",
-    "dev": "ts-node-dev --respawn --transpile-only ./src/app.ts"
+    "dev": "ts-node-dev --respawn --transpile-only ./src/app.ts",
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
