@@ -1,23 +1,52 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState, createContext } from 'react';
 import SearchBar from './components/SearchBar/SearchBar';
 import NoteForm from './components/NoteForm/NoteForm';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 import './App.css';
+import Note from './components/Note/Note';
 
+interface NotesData {
+  _id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+}
+
+interface NotesContextProps {
+  notes: NotesData[];
+  setNotes: React.Dispatch<React.SetStateAction<NotesData[]>>;
+  isFormOpen: boolean;
+  handleFormClose: any,
+  handleFormSubmit: any,
+  setFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const NotesContext = createContext<NotesContextProps | undefined>(undefined);
 const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [notes, setNotes] = useState<NotesData[]>([]);
+  const backend_url: string = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+  
+  
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get(`${backend_url}/getNotes`);
+      setNotes(response.data);
+    } catch (error) {
+      setNotes([]);
+    }
+  },[backend_url]);
+  
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     console.log('Search query:', query);
-  };
-
-  const [isDialogOpen, setDialogOpen] = useState(false);
-
-  const handleAddClick = () => {
-    setDialogOpen(true);
   };
 
   const [isFormOpen, setFormOpen] = useState(false);
@@ -30,40 +59,38 @@ const App: React.FC = () => {
     setFormOpen(false);
   };
 
-  const handleFormSubmit = async (title: string, description: string) => {
-    try {
-      // Simulate an API call delay (replace with actual API call)
-      const responseMessage = await new Promise<string>((resolve) => {
-        setTimeout(() => {
-          // Assume the API call was successful, and the response message is "Note submitted successfully!"
-          resolve('Note submitted successfully!');
-        }, 2000);
-      });
-
-      // Display success message using toast
-      toast.success(responseMessage);
-
-      return responseMessage;
-    } catch (error) {
-      // Display error message using toast
-      toast.error('Error submitting note. Please try again.');
-      throw error;
-    }
-  };
-
+  const notesContextValue: any = {
+    notes,
+    setNotes,
+    isFormOpen,
+    handleFormClose,
+    setFormOpen
+  }
 
   return (
-    <div className="appContainer">
-      <div className = "headerContainer">
-        <div className = "title">Notes App</div>
-        <div className = "searchBar">
-          <SearchBar onSearch={ handleSearch } />
+    <NotesContext.Provider value = { notesContextValue }>
+      <div className="appContainer">
+        <div className = "headerContainer">
+          <div className = "title">Notes App</div>
+          <div className = "searchBar">
+            <SearchBar onSearch={ handleSearch } />
+          </div>
+          <AddCircleOutlineIcon className = "addNotesIcon" onClick={handleFormOpen} />
         </div>
-        <AddCircleOutlineIcon className = "addNotesIcon" onClick={handleFormOpen} />
+        <div>
+            {
+              notes.length ? 
+                notes.map((note: any) => {
+                  return <Note key = {note._id} { ...note }/>
+                }) 
+              : <div className= "">No notes present</div>
+            }
+        </div>
+        {isFormOpen && <NoteForm/>}
+        <ToastContainer />
       </div>
-      <NoteForm isOpen={isFormOpen} onClose={handleFormClose} onSubmit={handleFormSubmit} />
-      <ToastContainer />
-    </div>
+    </NotesContext.Provider>
+    
   );
 };
 

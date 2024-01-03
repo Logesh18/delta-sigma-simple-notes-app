@@ -1,5 +1,5 @@
 // src/Form.tsx
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -8,19 +8,37 @@ import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/material/CircularProgress';
+import axios from 'axios';
 import './NoteForm.css';
+import { NotesContext } from '../../App';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface FormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (title: string, description: string) => Promise<string>;
+  isEdit?: boolean;
+  initialTitle?: string;
+  initialDescription?: string;
+  _id?: string;
 }
 
-const NoteForm: React.FC<FormProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+const NoteForm: React.FC<FormProps> = ({
+  isEdit = false,
+  initialTitle = '',
+  initialDescription = '',
+  _id = ''
+}) => {
+  const [title, setTitle] = useState(initialTitle);
+  const [description, setDescription] = useState(initialDescription);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
+  const backend_url: string = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+  const notesContext = useContext(NotesContext);
+
+  useEffect(() => {
+    setTitle(initialTitle);
+    setDescription(initialDescription);
+    setErrors({});
+  }, [ notesContext?.isFormOpen, initialTitle, initialDescription ]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -39,16 +57,23 @@ const NoteForm: React.FC<FormProps> = ({ isOpen, onClose, onSubmit }) => {
     if (validateForm()) {
       try {
         setLoading(true);
-        const responseMessage = await onSubmit(title, description);
-        setTitle('');
-        setDescription('');
-        onClose();
-        // Optionally, you can handle the response message here or in the parent component
+        let response:any = [];
+        if (isEdit) {
+          const response = await axios.put(`${backend_url}/updateNote/${_id}`, { title, description });
+          notesContext?.setNotes(response.data);
+          toast.success('Note updated successfully');
+        } else {
+          response = await axios.post(`${backend_url}/createNote`, { title, description });
+          notesContext?.setNotes(response.data);
+          toast.success('Note created successfully');
+        }
       } catch (error) {
-        console.error('Error submitting note:', error);
-        // Optionally, handle the error here or in the parent component
+        toast.error('Something went wrong');
       } finally {
         setLoading(false);
+        setTitle('');
+        setDescription('');
+        notesContext?.handleFormClose();
       }
     }
   };
@@ -56,13 +81,14 @@ const NoteForm: React.FC<FormProps> = ({ isOpen, onClose, onSubmit }) => {
   const handleClose = () => {
     setTitle('');
     setDescription('');
-    onClose();
+    setErrors({});
+    notesContext?.handleFormClose();
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={notesContext?.isFormOpen ?? false} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle className="dialogHeader">
-        Add Note
+        {isEdit ? 'Edit Note' : 'Add Note'}
         <IconButton edge="end" color="inherit" onClick={handleClose} aria-label="close">
           <CloseIcon />
         </IconButton>
@@ -91,7 +117,7 @@ const NoteForm: React.FC<FormProps> = ({ isOpen, onClose, onSubmit }) => {
             margin="normal"
           />
           <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
-            Submit
+            {isEdit ? 'Update' : 'Submit'}
           </Button>
         </form>
       </DialogContent>

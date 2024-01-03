@@ -10,11 +10,11 @@ interface INote extends Document {
 
 const formatDate = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
+        month: 'short',
         day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
         hour12: true,
     };
     return date.toLocaleString('en-US', options);

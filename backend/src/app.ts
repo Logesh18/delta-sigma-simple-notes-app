@@ -2,7 +2,7 @@ import express, { Express } from 'express';
 import mongoose, { ConnectOptions } from 'mongoose';
 import routes from './routes';
 import * as dotenv from 'dotenv';
-
+import cors from 'cors';
 dotenv.config();
 
 const app: Express = express();
@@ -24,6 +24,7 @@ db.once('open', () => {
 });
 
 // Middlewares
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/', routes);
