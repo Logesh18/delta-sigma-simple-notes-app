@@ -3,7 +3,6 @@ import React, { useContext } from 'react';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import { InputAdornment } from '@mui/material';
-import './SearchBar.css';
 import { SearchBarProps } from '../../interfaces';
 import axios from 'axios';
 import { toast } from 'react-toastify';import 'react-toastify/dist/ReactToastify.css';
@@ -14,9 +13,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchQuery }) => {
     const notesContext = useContext(NotesContext);
     const handleSearch = async (event: React.KeyboardEvent<HTMLInputElement>) => {
         try {
-            const response = await axios.get(`${backend_url}/searchNotes?q=${searchQuery}`);
-            notesContext?.setNotes(response.data);
-            toast.success('Notes are filtered', process.env.REACT_APP_TOAST_TIME);
+            if(event?.key === 'Enter') {
+                const response = await axios.get(`${backend_url}/searchNotes?q=${searchQuery}`);
+                notesContext?.setNotes(response.data);
+                toast.success('Notes are filtered', process.env.REACT_APP_TOAST_TIME);
+            }
         } catch (error) {
             notesContext?.setNotes(notesContext?.notes);
             toast.error('Failed to filter notes', process.env.REACT_APP_TOAST_TIME);

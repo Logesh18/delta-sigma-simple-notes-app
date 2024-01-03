@@ -1,5 +1,17 @@
+.CardContainer {
+    width:300px;
+    height: 200px;
+}
+
 .CardHeader {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
+}
+
+.TextOverflow {
+    max-height: 4.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-line;
 }

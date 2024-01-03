@@ -62,13 +62,13 @@ const App: React.FC = () => {
 
   return (
     <NotesContext.Provider value = { notesContextValue }>
-      <div className="appContainer">
+      <>
         <div className = "headerContainer">
           <div className = "title">Notes App</div>
           <div className = "searchBar">
             <SearchBar onSearch={ handleSearch } searchQuery={searchQuery}/>
           </div>
-          <AddCircleOutlineIcon onClick={handleFormOpen} />
+          <AddCircleOutlineIcon className="AddIcon" onClick={handleFormOpen} />
         </div>
         <div className="NotesContainer">
             {
@@ -81,7 +81,7 @@ const App: React.FC = () => {
         </div>
         {isFormOpen && <NoteForm/>}
         <ToastContainer />
-      </div>
+      </>
     </NotesContext.Provider>
     
   );

@@ -2,7 +2,6 @@ import React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -14,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import NoteForm from '../NoteForm/NoteForm';
 import { NotesData } from '../../interfaces';
 import "./Note.css"
+import { CardHeader } from '@mui/material';
 
 const Note: React.FC<NotesData> = ({ _id, title, description, createdAt }) => {
     const notesContext = useContext(NotesContext);
@@ -42,27 +42,24 @@ const Note: React.FC<NotesData> = ({ _id, title, description, createdAt }) => {
 
     return (
         <>
-            <Card>
-                <CardContent>
-                    <div className="CardHeader">
-                        <Typography variant="h5" component="div">
-                            {title}
-                        </Typography>
-                        <CardActions>
+            <Card className="CardContainer">
+                <CardHeader
+                    action={
+                        <>
                             <IconButton aria-label="edit" onClick={handleEdit}>
                                 <EditIcon />
                             </IconButton>
                             <IconButton aria-label="delete" onClick={handleDelete}>
                                 <DeleteIcon />
                             </IconButton>
-                        </CardActions>
-                    </div>
-
-                    <Typography variant="body2" color="text.secondary">
+                        </>
+                    }
+                    title = {title} 
+                    subheader = {createdAt}
+                />
+                <CardContent>
+                    <Typography className="Description TextOverflow" paragraph color="text.secondary">
                         {description}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        {createdAt}
                     </Typography>
                 </CardContent>
             </Card>
