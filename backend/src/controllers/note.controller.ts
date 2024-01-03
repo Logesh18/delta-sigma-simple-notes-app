@@ -6,7 +6,6 @@ export const getNotes = async (req: Request, res: Response) => {
         const notes = await NoteRepo.getNotes();
         res.status(200).json(notes);
     } catch (error) {
-        console.error(error);
         res.status(500).send('Internal Server Error');
     }
 };
@@ -20,20 +19,17 @@ export const createNote = async (req: Request, res: Response) => {
         const notes = await NoteRepo.createNote(newNoteData);
         res.status(200).json(notes);
     } catch (error) {
-        console.error(error);
         res.status(500).send('Internal Server Error');
     }
 };
 
 export const updateNote = async (req: Request, res: Response) => {
     try {
-        console.log(req.params, req.body);
         const noteId = req.params.id;
         const updateNote = req.body;
         const notes = await NoteRepo.updateNote(noteId, updateNote);
         res.status(200).json(notes);
     } catch (error) {
-        console.error(error);
         res.status(500).send('Internal Server Error');
     }
 };
@@ -44,7 +40,6 @@ export const deleteNote = async (req: Request, res: Response) => {
         const notes = await NoteRepo.deleteNote(noteId);
         res.status(200).json(notes);
     } catch (error) {
-        console.error(error);
         res.status(500).send('Internal Server Error');
     }
 };
@@ -55,7 +50,6 @@ export const searchNotes = async (req: Request, res: Response) => {
         const notes = await NoteRepo.searchNotes(searchText);
         res.status(200).json(notes);
     } catch (error) {
-        console.error(error);
         res.status(500).send('Internal Server Error');
     }
 };

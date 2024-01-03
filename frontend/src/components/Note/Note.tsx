@@ -12,19 +12,20 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NoteForm from '../NoteForm/NoteForm';
-
-interface NotesData {
-    _id: string;
-    title: string;
-    description: string;
-    createdAt: string;
-}
+import { NotesData } from '../../interfaces';
+import "./Note.css"
 
 const Note: React.FC<NotesData> = ({ _id, title, description, createdAt }) => {
     const notesContext = useContext(NotesContext);
     const backend_url: string = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
 
     const handleEdit = async () => {
+        notesContext?.setCurrentData({
+            _id,
+            isEdit: true,
+            initialTitle: title,
+            initialDescription: description
+        });
         notesContext?.setFormOpen(true);
     };
 
@@ -32,10 +33,10 @@ const Note: React.FC<NotesData> = ({ _id, title, description, createdAt }) => {
         try {
             const response = await axios.delete(`${backend_url}/deleteNote/${_id}`);
             notesContext?.setNotes(response.data);
-            toast.success('Note deleted successfully');
+            toast.success('Note deleted successfully', process.env.REACT_APP_TOAST_TIME);
         } catch (error) {
             notesContext?.setNotes(notesContext?.notes);
-            toast.error('Failed to delete note');
+            toast.error('Failed to delete note', process.env.REACT_APP_TOAST_TIME);
         }
     };
 
@@ -43,18 +44,18 @@ const Note: React.FC<NotesData> = ({ _id, title, description, createdAt }) => {
         <>
             <Card>
                 <CardContent>
-                    <div className="">
-                    <Typography variant="h5" component="div">
-                        {title}
-                    </Typography>
-                    <CardActions>
-                        <IconButton aria-label="edit" onClick={handleEdit}>
-                            <EditIcon />
-                        </IconButton>
-                        <IconButton aria-label="delete" onClick={handleDelete}>
-                            <DeleteIcon />
-                        </IconButton>
-                    </CardActions>
+                    <div className="CardHeader">
+                        <Typography variant="h5" component="div">
+                            {title}
+                        </Typography>
+                        <CardActions>
+                            <IconButton aria-label="edit" onClick={handleEdit}>
+                                <EditIcon />
+                            </IconButton>
+                            <IconButton aria-label="delete" onClick={handleDelete}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </CardActions>
                     </div>
 
                     <Typography variant="body2" color="text.secondary">

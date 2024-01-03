@@ -13,32 +13,21 @@ import './NoteForm.css';
 import { NotesContext } from '../../App';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FormProps } from '../../interfaces';
 
-interface FormProps {
-  isEdit?: boolean;
-  initialTitle?: string;
-  initialDescription?: string;
-  _id?: string;
-}
-
-const NoteForm: React.FC<FormProps> = ({
-  isEdit = false,
-  initialTitle = '',
-  initialDescription = '',
-  _id = ''
-}) => {
-  const [title, setTitle] = useState(initialTitle);
-  const [description, setDescription] = useState(initialDescription);
+const NoteForm: React.FC<FormProps> = () => {
+  const notesContext = useContext(NotesContext);
+  const [title, setTitle] = useState(notesContext?.currentData.initialTitle || '');
+  const [description, setDescription] = useState(notesContext?.currentData.initialDescription || '');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
   const backend_url: string = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
-  const notesContext = useContext(NotesContext);
 
   useEffect(() => {
-    setTitle(initialTitle);
-    setDescription(initialDescription);
+    setTitle(notesContext?.currentData.initialTitle || '');
+    setDescription(notesContext?.currentData.initialDescription || '');
     setErrors({});
-  }, [ notesContext?.isFormOpen, initialTitle, initialDescription ]);
+  }, [ notesContext?.isFormOpen, notesContext?.currentData.initialTitle, notesContext?.currentData.initialDescription ]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -58,17 +47,17 @@ const NoteForm: React.FC<FormProps> = ({
       try {
         setLoading(true);
         let response:any = [];
-        if (isEdit) {
-          const response = await axios.put(`${backend_url}/updateNote/${_id}`, { title, description });
+        if (notesContext?.currentData.isEdit) {
+          const response = await axios.put(`${backend_url}/updateNote/${notesContext?.currentData._id}`, { title, description });
           notesContext?.setNotes(response.data);
-          toast.success('Note updated successfully');
+          toast.success('Note updated successfully', process.env.REACT_APP_TOAST_TIME);
         } else {
           response = await axios.post(`${backend_url}/createNote`, { title, description });
           notesContext?.setNotes(response.data);
-          toast.success('Note created successfully');
+          toast.success('Note created successfully', process.env.REACT_APP_TOAST_TIME);
         }
       } catch (error) {
-        toast.error('Something went wrong');
+        toast.error('Something went wrong', process.env.REACT_APP_TOAST_TIME);
       } finally {
         setLoading(false);
         setTitle('');
@@ -88,7 +77,7 @@ const NoteForm: React.FC<FormProps> = ({
   return (
     <Dialog open={notesContext?.isFormOpen ?? false} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle className="dialogHeader">
-        {isEdit ? 'Edit Note' : 'Add Note'}
+        {notesContext?.currentData.isEdit ? 'Edit Note' : 'Add Note'}
         <IconButton edge="end" color="inherit" onClick={handleClose} aria-label="close">
           <CloseIcon />
         </IconButton>
@@ -117,7 +106,7 @@ const NoteForm: React.FC<FormProps> = ({
             margin="normal"
           />
           <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
-            {isEdit ? 'Update' : 'Submit'}
+            {notesContext?.currentData.isEdit ? 'Update' : 'Submit'}
           </Button>
         </form>
       </DialogContent>

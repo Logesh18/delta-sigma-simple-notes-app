@@ -21,6 +21,11 @@
     width: 50%;
 }
 
-addNotesIcon {
-    font-size: large;
+.NotesContainer {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 5%;
+    padding:20px;
 }

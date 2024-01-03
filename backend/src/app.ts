@@ -17,12 +17,6 @@ const options: ConnectOptions = {
 // MongoDB Connection
 mongoose.connect(uri, options);
 const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log(`Connected to MongoDB database: ${dbName}`);
-});
-
 // Middlewares
 app.use(cors());
 app.use(express.json());

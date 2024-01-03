@@ -7,29 +7,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import './App.css';
 import Note from './components/Note/Note';
-
-interface NotesData {
-  _id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-}
-
-interface NotesContextProps {
-  notes: NotesData[];
-  setNotes: React.Dispatch<React.SetStateAction<NotesData[]>>;
-  isFormOpen: boolean;
-  handleFormClose: any,
-  handleFormSubmit: any,
-  setFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { FormProps, NotesContextProps, NotesData } from './interfaces';
 
 export const NotesContext = createContext<NotesContextProps | undefined>(undefined);
 const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [notes, setNotes] = useState<NotesData[]>([]);
   const backend_url: string = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
-  
+  const defaultFormValue: FormProps = {
+    _id: '',
+    isEdit: false,
+    initialTitle: '',
+    initialDescription: ''
+  };
+  const [currentData, setCurrentData] = useState<FormProps>(defaultFormValue);
   
   const fetchData = useCallback(async () => {
     try {
@@ -46,12 +37,12 @@ const App: React.FC = () => {
   
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    console.log('Search query:', query);
   };
 
   const [isFormOpen, setFormOpen] = useState(false);
 
   const handleFormOpen = () => {
+    setCurrentData(defaultFormValue);
     setFormOpen(true);
   };
 
@@ -61,10 +52,12 @@ const App: React.FC = () => {
 
   const notesContextValue: any = {
     notes,
-    setNotes,
+    currentData,
     isFormOpen,
+    setNotes,
     handleFormClose,
-    setFormOpen
+    setFormOpen,
+    setCurrentData
   }
 
   return (
@@ -73,11 +66,11 @@ const App: React.FC = () => {
         <div className = "headerContainer">
           <div className = "title">Notes App</div>
           <div className = "searchBar">
-            <SearchBar onSearch={ handleSearch } />
+            <SearchBar onSearch={ handleSearch } searchQuery={searchQuery}/>
           </div>
-          <AddCircleOutlineIcon className = "addNotesIcon" onClick={handleFormOpen} />
+          <AddCircleOutlineIcon onClick={handleFormOpen} />
         </div>
-        <div>
+        <div className="NotesContainer">
             {
               notes.length ? 
                 notes.map((note: any) => {
