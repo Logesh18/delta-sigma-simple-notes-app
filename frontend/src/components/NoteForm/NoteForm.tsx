@@ -1,4 +1,3 @@
-// src/Form.tsx
 import React, { useContext, useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -83,7 +82,7 @@ const NoteForm: React.FC<FormProps> = () => {
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        {loading && <CircularProgress />} {/* Show loading spinner while API call is in progress */}
+        {loading && <CircularProgress />}
         <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
           <TextField
             fullWidth

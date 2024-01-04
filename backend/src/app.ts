@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import mongoose, { ConnectOptions } from 'mongoose';
 import routes from './routes';
 import * as dotenv from 'dotenv';
