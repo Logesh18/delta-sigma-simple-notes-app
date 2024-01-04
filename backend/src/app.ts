@@ -23,13 +23,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/', routes);
 
-// app.listen(port, () => {
-//   console.log(`Server is running on http://localhost:${port}`);
-// });
-
-// Default route to handle all requests
-app.all('*', (req: Request, res: Response) => {
-  res.status(200).send('Express app running on Netlify!');
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
 export { app };
