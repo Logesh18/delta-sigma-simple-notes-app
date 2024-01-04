@@ -6,7 +6,7 @@ Typescipt, Context Api, Material UI and Material Icons have been used to develop
 It requires Title and Description to create the notes.
 Form validation has been included.
 CRUD operation features has been provided in this application.
-Deployed in Netlify - https://main--ds-notes-app.netlify.app/
+Deployed in Netlify - https://ds-notes-app.netlify.app/
 
 ## Backend
 
